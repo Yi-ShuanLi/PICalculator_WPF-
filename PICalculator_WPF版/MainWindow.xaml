@@ -6,18 +6,146 @@
         xmlns:local="clr-namespace:PICalculator_WPF版"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <StackPanel>
-        <StackPanel Orientation="Vertical" >
-            <Label FontSize="20">PI Calculater</Label>
-            <StackPanel Orientation="Horizontal" >
-                <Label FontSize="16">Sample Size：</Label>
-                <TextBox Width="200"  Text="{Binding Sample}"></TextBox>
-                <Button Content="Add" Command="{Binding AddCommand}" CommandParameter="{Binding}" Margin="15,0,30,0"></Button>
-            </StackPanel>
-        </StackPanel>
-        <DataGrid Name="dataGrid" ItemsSource="{Binding sampleModels}">
+    <StackPanel Background="#0a0e27">
+        <StackPanel.Resources>
+            <!-- 霓虹發光效果 -->
+            <DropShadowEffect x:Key="NeonGlow" Color="#00d4ff" BlurRadius="20" ShadowDepth="0" Opacity="0.8"/>
+            <DropShadowEffect x:Key="NeonGlowPink" Color="#ff0080" BlurRadius="15" ShadowDepth="0" Opacity="0.6"/>
 
-        </DataGrid>
+            <!-- 按鈕樣式 -->
+            <Style x:Key="TechButton" TargetType="Button">
+                <Setter Property="Background" Value="#1a1f3a"/>
+                <Setter Property="Foreground" Value="#00d4ff"/>
+                <Setter Property="BorderBrush" Value="#00d4ff"/>
+                <Setter Property="BorderThickness" Value="2"/>
+                <Setter Property="Padding" Value="20,8"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Effect" Value="{StaticResource NeonGlow}"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#00d4ff"/>
+                        <Setter Property="Foreground" Value="#0a0e27"/>
+                    </Trigger>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Opacity" Value="0.4"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <!-- TextBox 樣式 -->
+            <Style x:Key="TechTextBox" TargetType="TextBox">
+                <Setter Property="Background" Value="#1a1f3a"/>
+                <Setter Property="Foreground" Value="#00d4ff"/>
+                <Setter Property="BorderBrush" Value="#00d4ff"/>
+                <Setter Property="BorderThickness" Value="2"/>
+                <Setter Property="Padding" Value="10,8"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="CaretBrush" Value="#00d4ff"/>
+            </Style>
+
+            <!-- Label 樣式 -->
+            <Style x:Key="TechLabel" TargetType="Label">
+                <Setter Property="Foreground" Value="#00d4ff"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+            </Style>
+
+            <Style x:Key="ValueLabel" TargetType="Label">
+                <Setter Property="Foreground" Value="#ff0080"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="Effect" Value="{StaticResource NeonGlowPink}"/>
+            </Style>
+        </StackPanel.Resources>
+
+        <StackPanel Orientation="Vertical" Margin="30,20">
+            <!-- 標題區域 -->
+            <Label FontSize="32" Foreground="#00d4ff" FontWeight="Bold" HorizontalAlignment="Center" 
+               Margin="0,10,0,30" Effect="{StaticResource NeonGlow}">
+                <Label.Style>
+                    <Style TargetType="Label">
+                        <Style.Triggers>
+                            <EventTrigger RoutedEvent="Loaded">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" 
+                                                   From="0" To="1" Duration="0:0:1.5"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Label.Style>
+                ⚛ PI CALCULATOR ⚛
+            </Label>
+
+            <!-- 控制面板 -->
+            <Border Background="#12162b" BorderBrush="#00d4ff" BorderThickness="2" 
+                CornerRadius="10" Padding="25" Margin="0,0,0,20">
+                <Border.Effect>
+                    <DropShadowEffect Color="#00d4ff" BlurRadius="25" ShadowDepth="0" Opacity="0.3"/>
+                </Border.Effect>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Label FontSize="16" Style="{StaticResource TechLabel}" VerticalAlignment="Center">
+                        SAMPLE SIZE：
+                    </Label>
+                    <TextBox Width="200" Text="{Binding Sample}" Style="{StaticResource TechTextBox}" 
+                         VerticalAlignment="Center" Margin="10,0"/>
+                    <Button Content="▶ ADD" Command="{Binding AddCommand}" CommandParameter="{Binding}" 
+                        Margin="15,0,0,0" IsEnabled="{Binding IsStopOrReStart}" 
+                        Style="{StaticResource TechButton}"/>
+                    <Button Content="{Binding RunningButtonText}" Command="{Binding StopCommand}" 
+                        CommandParameter="{Binding}" Margin="15,0,0,0" 
+                        Style="{StaticResource TechButton}"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
+        <!-- 結果列表 -->
+        <StackPanel Orientation="Vertical" Margin="30,0">
+            <ItemsControl ItemsSource="{Binding sampleModels}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="#12162b" BorderBrush="#00d4ff" BorderThickness="1" 
+                            CornerRadius="8" Margin="0,0,0,15" Padding="20">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Style.Triggers>
+                                        <EventTrigger RoutedEvent="Loaded">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" 
+                                                               From="0" To="1" Duration="0:0:0.5"/>
+                                                    <ThicknessAnimation Storyboard.TargetProperty="Margin" 
+                                                                  From="0,-20,0,0" To="0,0,0,15" 
+                                                                  Duration="0:0:0.5"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="{Binding Sample}" Style="{StaticResource TechLabel}" 
+                                   Width="120" FontSize="14"/>
+                                <Label Content="{Binding Time}" Style="{StaticResource TechLabel}" 
+                                   Width="100" FontSize="12"/>
+                                <Label Content="{Binding Value}" Style="{StaticResource ValueLabel}" 
+                                   Width="150" FontSize="16"/>
+                                <Button Content="⏸ 暫停" Command="{Binding StopSampleModelCommand}" 
+                                    CommandParameter="{Binding}" IsEnabled="{Binding ButtonEnable}" 
+                                    Style="{StaticResource TechButton}" Margin="10,0"/>
+                                <Label Content="{Binding StatesShow}" Style="{StaticResource TechLabel}" 
+                                   Width="80" FontSize="12"/>
+                                <Label Content="{Binding UsedTimes}" Style="{StaticResource ValueLabel}" 
+                                   Width="120" FontSize="12"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
     </StackPanel>
 
 </Window>
